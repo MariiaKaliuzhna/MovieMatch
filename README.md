@@ -1,2 +1,2 @@
 # MovieMatch
-Recommendation system project
+Academic movie recommendation system project
