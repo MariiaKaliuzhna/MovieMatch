@@ -4,7 +4,6 @@ import { authMiddleware, AuthRequest } from '../middleware/auth';
 
 const router = Router();
 
-// GET /api/watchlist
 router.get('/', authMiddleware, async (req: AuthRequest, res: Response): Promise<void> => {
   try {
     const userid = req.userId;
@@ -25,11 +24,10 @@ router.get('/', authMiddleware, async (req: AuthRequest, res: Response): Promise
   }
 });
 
-// POST /api/watchlist
 router.post('/', authMiddleware, async (req: AuthRequest, res: Response): Promise<void> => {
   try {
     const userid = req.userId;
-    const { movieid } = req.body; // Тут усе вірно, movieid з маленької
+    const { movieid } = req.body;
 
     if (!movieid) {
       res.status(400).json({ error: 'movieid is required' });
@@ -47,13 +45,9 @@ router.post('/', authMiddleware, async (req: AuthRequest, res: Response): Promis
   }
 });
 
-// DELETE /api/watchlist/:movieid
-// УВАГА: Змінив :movieId на :movieid, щоб назва параметра збігалася з деструктуризацією нижче
 router.delete('/:movieid', authMiddleware, async (req: AuthRequest, res: Response): Promise<void> => {
   try {
     const userid = req.userId;
-    // БУЛО: const { movieid } = req.params; (але в роуті було :movieId)
-    // ТРЕБА: назва в { } має бути ідентичною тій, що в рядку роута вище
     const { movieid } = req.params; 
     
     await pool.query('DELETE FROM watchlist WHERE userid = $1 AND movieid = $2', [userid, movieid]);
