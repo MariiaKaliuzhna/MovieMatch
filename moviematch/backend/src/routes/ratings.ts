@@ -7,10 +7,10 @@ const router = Router();
 // POST /api/ratings - submit or update rating
 router.post('/', authMiddleware, async (req: AuthRequest, res: Response): Promise<void> => {
   try {
-    const userId = req.userId;
-    const { movieId, rating, tag } = req.body;
+    const userid = req.userId;
+    const { movieid, rating, tag } = req.body;
 
-    if (!movieId || !rating || rating < 1 || rating > 5) {
+    if (!movieid || !rating || rating < 1 || rating > 5) {
       res.status(400).json({ error: 'Valid movieId and rating (1-5) are required' });
       return;
     }
@@ -21,7 +21,7 @@ router.post('/', authMiddleware, async (req: AuthRequest, res: Response): Promis
        VALUES ($1, $2, $3, NOW())
        ON CONFLICT (userid, movieid)
        DO UPDATE SET rating = $3, timestamp = NOW()`,
-      [userId, movieId, rating]
+      [userid, movieid, rating]
     );
 
     // Handle tag if provided
@@ -31,7 +31,7 @@ router.post('/', authMiddleware, async (req: AuthRequest, res: Response): Promis
          VALUES ($1, $2, $3, NOW())
          ON CONFLICT (userid, movieid)
          DO UPDATE SET tag = $3, timestamp = NOW()`,
-        [movieId, userId, tag.trim()]
+        [movieid, userid, tag.trim()]
       );
     }
 
@@ -41,13 +41,13 @@ router.post('/', authMiddleware, async (req: AuthRequest, res: Response): Promis
         `INSERT INTO favorites (userid, movieid, added_at)
          VALUES ($1, $2, NOW())
          ON CONFLICT (userid, movieid) DO NOTHING`,
-        [userId, movieId]
+        [userid, movieid]
       );
     } else {
       // Remove from favorites if rating changed from 5
       await pool.query(
         `DELETE FROM favorites WHERE userid = $1 AND movieid = $2`,
-        [userId, movieId]
+        [userid, movieid]
       );
     }
 
@@ -61,7 +61,7 @@ router.post('/', authMiddleware, async (req: AuthRequest, res: Response): Promis
 // GET /api/ratings/history - user's rating history
 router.get('/history', authMiddleware, async (req: AuthRequest, res: Response): Promise<void> => {
   try {
-    const userId = req.userId;
+    const userid = req.userId;
 
     const result = await pool.query(
       `SELECT m.movieid, m.title, m.poster_path, m.release_date, m.genres,
@@ -70,7 +70,7 @@ router.get('/history', authMiddleware, async (req: AuthRequest, res: Response): 
        JOIN movies m ON r.movieid = m.movieid
        WHERE r.userid = $1
        ORDER BY r.timestamp DESC`,
-      [userId]
+      [userid]
     );
 
     res.json(result.rows);

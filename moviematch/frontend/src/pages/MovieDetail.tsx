@@ -34,7 +34,7 @@ export default function MovieDetail() {
     if (!selectedRating || !isLoggedIn) return;
     setSubmitting(true);
     try {
-      await api.post('/ratings', { movieId: id, rating: selectedRating });
+      await api.post('/ratings', { movieid: id, rating: selectedRating });
       showToast('Rating saved!', 'success');
       setMovie(m => m ? { ...m, user_rating: selectedRating! } : m);
     } catch {

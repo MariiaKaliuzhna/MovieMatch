@@ -7,7 +7,7 @@ const router = Router();
 // GET /api/watchlist
 router.get('/', authMiddleware, async (req: AuthRequest, res: Response): Promise<void> => {
   try {
-    const userId = req.userId;
+    const userid = req.userId;
     const result = await pool.query(
       `SELECT m.movieid, m.title, m.poster_path, m.release_date, m.genres,
               r.rating as user_rating, w.added_at
@@ -16,7 +16,7 @@ router.get('/', authMiddleware, async (req: AuthRequest, res: Response): Promise
        LEFT JOIN ratings r ON m.movieid = r.movieid AND r.userid = $1
        WHERE w.userid = $1
        ORDER BY w.added_at DESC`,
-      [userId]
+      [userid]
     );
     res.json(result.rows);
   } catch (err) {
@@ -28,16 +28,17 @@ router.get('/', authMiddleware, async (req: AuthRequest, res: Response): Promise
 // POST /api/watchlist
 router.post('/', authMiddleware, async (req: AuthRequest, res: Response): Promise<void> => {
   try {
-    const userId = req.userId;
-    const { movieId } = req.body;
-    if (!movieId) {
-      res.status(400).json({ error: 'movieId is required' });
+    const userid = req.userId;
+    const { movieid } = req.body; // Тут усе вірно, movieid з маленької
+
+    if (!movieid) {
+      res.status(400).json({ error: 'movieid is required' });
       return;
     }
     await pool.query(
       `INSERT INTO watchlist (userid, movieid, added_at) VALUES ($1, $2, NOW())
        ON CONFLICT (userid, movieid) DO NOTHING`,
-      [userId, movieId]
+      [userid, movieid]
     );
     res.json({ success: true });
   } catch (err) {
@@ -46,12 +47,16 @@ router.post('/', authMiddleware, async (req: AuthRequest, res: Response): Promis
   }
 });
 
-// DELETE /api/watchlist/:movieId
-router.delete('/:movieId', authMiddleware, async (req: AuthRequest, res: Response): Promise<void> => {
+// DELETE /api/watchlist/:movieid
+// УВАГА: Змінив :movieId на :movieid, щоб назва параметра збігалася з деструктуризацією нижче
+router.delete('/:movieid', authMiddleware, async (req: AuthRequest, res: Response): Promise<void> => {
   try {
-    const userId = req.userId;
-    const { movieId } = req.params;
-    await pool.query('DELETE FROM watchlist WHERE userid = $1 AND movieid = $2', [userId, movieId]);
+    const userid = req.userId;
+    // БУЛО: const { movieid } = req.params; (але в роуті було :movieId)
+    // ТРЕБА: назва в { } має бути ідентичною тій, що в рядку роута вище
+    const { movieid } = req.params; 
+    
+    await pool.query('DELETE FROM watchlist WHERE userid = $1 AND movieid = $2', [userid, movieid]);
     res.json({ success: true });
   } catch (err) {
     console.error(err);

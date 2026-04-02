@@ -8,7 +8,7 @@ const router = Router();
 router.get('/', async (req: AuthRequest, res: Response): Promise<void> => {
   try {
     const { search, genre, yearFrom, yearTo, sortBy, sortOrder } = req.query;
-    const userId = req.headers['x-user-id'];
+    const userid = req.headers['x-user-id'];
 
     let query = `
       SELECT m.movieid, m.tmdbid, m.title, m.overview, m.poster_path,
@@ -18,7 +18,7 @@ router.get('/', async (req: AuthRequest, res: Response): Promise<void> => {
       LEFT JOIN ratings r ON m.movieid = r.movieid AND r.userid = $1
       WHERE 1=1
     `;
-    const params: (string | number)[] = [userId ? Number(userId) : 0];
+    const params: (string | number)[] = [userid ? Number(userid) : 0];
     let idx = 2;
 
     if (search) {
@@ -66,7 +66,7 @@ router.get('/', async (req: AuthRequest, res: Response): Promise<void> => {
 router.get('/:id', async (req: AuthRequest, res: Response): Promise<void> => {
   try {
     const { id } = req.params;
-    const userId = req.headers['x-user-id'];
+    const userid = req.headers['x-user-id'];
 
     const movieResult = await pool.query(
       `SELECT m.*, r.rating as user_rating, t.tag as user_tag
@@ -74,7 +74,7 @@ router.get('/:id', async (req: AuthRequest, res: Response): Promise<void> => {
        LEFT JOIN ratings r ON m.movieid = r.movieid AND r.userid = $1
        LEFT JOIN tags t ON m.movieid = t.movieid AND t.userid = $1
        WHERE m.movieid = $2`,
-      [userId ? Number(userId) : 0, id]
+      [userid ? Number(userid) : 0, id]
     );
 
     if (movieResult.rows.length === 0) {
@@ -92,7 +92,7 @@ router.get('/:id', async (req: AuthRequest, res: Response): Promise<void> => {
 // GET /api/movies/game/next - next unrated movie for game mode
 router.get('/game/next', authMiddleware, async (req: AuthRequest, res: Response): Promise<void> => {
   try {
-    const userId = req.userId;
+    const userid = req.userId;
 
     const result = await pool.query(
       `SELECT m.*
@@ -105,7 +105,7 @@ router.get('/game/next', authMiddleware, async (req: AuthRequest, res: Response)
        )
        ORDER BY RANDOM()
        LIMIT 1`,
-      [userId]
+      [userid]
     );
 
     if (result.rows.length === 0) {

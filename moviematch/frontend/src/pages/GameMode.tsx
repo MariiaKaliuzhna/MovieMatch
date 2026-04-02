@@ -44,7 +44,7 @@ export default function GameMode() {
   const handleWatchlist = async () => {
     if (!movie) return;
     try {
-      await api.post('/watchlist', { movieId: movie.movieid });
+      await api.post('/watchlist', { movieid: movie.movieid });
       showToast('Added to watchlist!', 'success');
       loadNext();
     } catch {
@@ -56,7 +56,7 @@ export default function GameMode() {
     if (!movie || !rating) return;
     setSubmitting(true);
     try {
-      await api.post('/ratings', { movieId: movie.movieid, rating, tag: tag || undefined });
+      await api.post('/ratings', { movieid: movie.movieid, rating, tag: tag || undefined });
       if (rating === 5) showToast('⭐ Added to favorites!', 'success');
       else showToast('Rating saved!', 'success');
       loadNext();
