@@ -73,27 +73,26 @@ h1, h2, h3 {
 .nav-icon-btn {
   width: 50px;
   height: 50px;
-  border: 2px solid var(--text-light);
   border-radius: 50%;
-  background: transparent;
-  color: var(--text-light);
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: background 0.2s, transform 0.15s;
-  text-decoration: none;
   position: relative;
+  border: none;
 }
 
 .nav-icon-btn:hover {
-  background: rgba(255,255,255,0.12);
   transform: scale(1.07);
 }
 
-.nav-icon-btn svg {
-  width: 22px;
-  height: 22px;
+.nav-icon-btn img {
+  width: 50px;
+  height: 50px;
+  object-fit: contain;
+  border-radius: 50%;
+  overflow: hidden;
+  display: block;
 }
 
 .user-menu-wrapper {
@@ -293,6 +292,7 @@ h1, h2, h3 {
 /* Rating buttons */
 .rating-btns {
   display: flex;
+  flex-wrap: nowrap;
   gap: 10px;
   align-items: center;
 }
@@ -474,6 +474,18 @@ h1, h2, h3 {
   padding: 20px 28px;
 }
 
+.meta-item {
+  display: flex;
+  gap: 5px;
+  align-items: flex-start;
+}
+
+.meta-label {
+  font-weight: 700;
+  color: white; 
+  min-width: 65px;
+}
+
 .search-bar {
   display: flex;
   align-items: center;
@@ -481,30 +493,35 @@ h1, h2, h3 {
   border-radius: 50px;
   background: white;
   overflow: hidden;
-  margin-bottom: 24px;
+  height: 46px;
 }
 
 .search-bar input {
   flex: 1;
-  padding: 13px 18px;
+  padding: 0 15px 0 20px;
   border: none;
   outline: none;
   font-size: 15px;
   font-family: 'DM Sans', sans-serif;
-  color: var(--text-dark);
-  background: transparent;
-}
-
-.search-bar .search-icon {
-  padding: 0 14px;
-  color: #9ab5a3;
 }
 
 .search-bar .btn-primary {
   border-radius: 0 50px 50px 0;
   padding: 13px 22px;
-  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
+
+.search-bar .btn-primary img {
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.search-bar .btn-primary:hover { background: var(--dark); }
 
 .sidebar-label {
   font-family: 'Playfair Display', serif;
@@ -644,7 +661,10 @@ h1, h2, h3 {
 .game-rating-btns {
   display: flex;
   gap: 8px;
-  flex-wrap: wrap;
+}
+
+.rating-btns {
+  justify-content: center;
 }
 
 .game-rating-btn {

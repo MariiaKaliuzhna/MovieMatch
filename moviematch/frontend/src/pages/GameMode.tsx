@@ -45,7 +45,6 @@ export default function GameMode() {
     if (!movie) return;
     try {
       await api.post('/watchlist', { movieid: movie.movieid });
-      showToast('Added to watchlist!', 'success');
       loadNext();
     } catch {
       showToast('Failed to add to watchlist');
@@ -57,8 +56,6 @@ export default function GameMode() {
     setSubmitting(true);
     try {
       await api.post('/ratings', { movieid: movie.movieid, rating, tag: tag || undefined });
-      if (rating === 5) showToast('⭐ Added to favorites!', 'success');
-      else showToast('Rating saved!', 'success');
       loadNext();
     } catch {
       showToast('Failed to save rating');
@@ -78,7 +75,7 @@ export default function GameMode() {
     <div className="game-page">
       <h1 className="game-title">Game mode</h1>
       <div className="empty-state">
-        <p>🎉 You've gone through all the movies!</p>
+        <p>You've gone through all the movies!</p>
         <button className="btn-primary" onClick={loadNext} style={{ marginTop: 16 }}>Try again</button>
       </div>
     </div>
@@ -112,8 +109,15 @@ export default function GameMode() {
           <div className="game-movie-title">{movie.title}</div>
           <div className="game-overview">{movie.overview}</div>
           <div style={{ fontSize: 14, color: 'var(--text-dark)', lineHeight: 1.8 }}>
-            <p><strong>Genres:</strong> {movie.genres || '—'}</p>
-            <p><strong>Release date:</strong> {year}</p>
+            <p><strong>Genres: </strong>
+            {movie.genres 
+              ? (Array.isArray(movie.genres) 
+              ? movie.genres.join(', ') 
+              : String(movie.genres).replace(/[\[\]']/g, ''))
+              : '—'
+            }
+            </p>
+            <p><strong>Release date: </strong> {year}</p>
           </div>
         </div>
 

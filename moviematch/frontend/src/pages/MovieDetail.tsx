@@ -89,10 +89,17 @@ export default function MovieDetail() {
           <h1>{movie.title}</h1>
           <div className="movie-overview">{movie.overview}</div>
           <div className="movie-meta">
-            <p><strong>Release date:</strong> {year}</p>
-            <p><strong>Genres:</strong> {movie.genres || '—'}</p>
-            <p><strong>User's tag:</strong> {movie.user_tag || '—'}</p>
-            <p><strong>User's score:</strong> {movie.user_rating ?? '"no score"'}</p>
+            <p><strong>Release date: </strong> {year}</p>
+            <p><strong>Genres: </strong>
+            {movie.genres 
+              ? (Array.isArray(movie.genres) 
+              ? movie.genres.join(', ') 
+              : String(movie.genres).replace(/[\[\]']/g, ''))
+              : '—'
+            }
+            </p>
+            <p><strong>User's tag: </strong> {movie.user_tag || '—'}</p>
+            <p><strong>User's score: </strong> {movie.user_rating ?? '"no score"'}</p>
           </div>
         </div>
       </div>
